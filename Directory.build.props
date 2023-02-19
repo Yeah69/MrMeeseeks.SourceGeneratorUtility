@@ -16,6 +16,7 @@
       <Pack>true</Pack>
       <PackagePath/>
     </None>
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <!-- General Package -->
@@ -24,6 +25,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Description>For further information and updates please visit the projects page.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
