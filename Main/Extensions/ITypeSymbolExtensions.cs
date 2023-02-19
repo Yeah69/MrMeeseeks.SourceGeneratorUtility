@@ -6,7 +6,7 @@ namespace MrMeeseeks.SourceGeneratorUtility.Extensions;
 public static class ITypeSymbolExtensions
 {
     // Picked from https://github.com/YairHalberstadt/stronginject Thank you!
-    internal static bool IsOrReferencesErrorType(this ITypeSymbol type)
+    public static bool IsOrReferencesErrorType(this ITypeSymbol type)
     {
         if (!type.ContainingType?.IsOrReferencesErrorType() ?? false)
             return false;
@@ -21,7 +21,7 @@ public static class ITypeSymbolExtensions
     }
 
     // Picked from https://github.com/YairHalberstadt/stronginject Thank you!
-    internal static bool IsAccessibleInternally(this ITypeSymbol type)
+    public static bool IsAccessibleInternally(this ITypeSymbol type)
     {
         if (type is ITypeParameterSymbol)
             return true;
@@ -38,7 +38,7 @@ public static class ITypeSymbolExtensions
     }
 
     // Picked from https://github.com/YairHalberstadt/stronginject Thank you!
-    internal static bool IsAccessiblePublicly(this ITypeSymbol type)
+    public static bool IsAccessiblePublicly(this ITypeSymbol type)
     {
         if (type is ITypeParameterSymbol)
             return true;

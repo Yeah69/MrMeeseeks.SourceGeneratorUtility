@@ -6,6 +6,6 @@ namespace MrMeeseeks.SourceGeneratorUtility.Extensions;
 public static class INamespaceSymbolExtensions
 {
     // Picked from https://github.com/YairHalberstadt/stronginject Thank you!
-    internal static string FullName(this INamespaceSymbol @namespace) =>
+    public static string FullName(this INamespaceSymbol @namespace) =>
         @namespace.ToDisplayString(new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces));
 }
