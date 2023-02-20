@@ -4,15 +4,19 @@ namespace MrMeeseeks.SourceGeneratorUtility;
 
 public sealed class CustomSymbolEqualityComparer : IEqualityComparer<ISymbol?>
 {
+    private readonly bool _considerNullability;
     private readonly SymbolEqualityComparer _originalSymbolEqualityComparer;
     
     public static readonly CustomSymbolEqualityComparer Default = new (false);
     public static readonly CustomSymbolEqualityComparer IncludeNullability = new (true);
 
-    internal CustomSymbolEqualityComparer(bool considerNullability) =>
+    internal CustomSymbolEqualityComparer(bool considerNullability)
+    {
+        _considerNullability = considerNullability;
         _originalSymbolEqualityComparer = considerNullability
             ? SymbolEqualityComparer.IncludeNullability
             : SymbolEqualityComparer.Default;
+    }
 
     public bool Equals(ISymbol? x, ISymbol? y)
     {
@@ -23,7 +27,8 @@ public sealed class CustomSymbolEqualityComparer : IEqualityComparer<ISymbol?>
         return _originalSymbolEqualityComparer.Equals(xNamed.ContainingNamespace, yNamed.ContainingNamespace) 
                && xNamed.Name == yNamed.Name 
                && xNamed.TypeArguments.Length == yNamed.TypeArguments.Length 
-               && xNamed.TypeArguments.Zip(yNamed.TypeArguments, Equals).All(b => b);
+               && xNamed.TypeArguments.Zip(yNamed.TypeArguments, Equals).All(b => b)
+               && (!_considerNullability || xNamed.NullableAnnotation == yNamed.NullableAnnotation);
     }
 
     public int GetHashCode(ISymbol? obj) => _originalSymbolEqualityComparer.GetHashCode(obj);
