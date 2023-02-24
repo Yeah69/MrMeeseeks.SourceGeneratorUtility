@@ -28,7 +28,11 @@ public sealed class CustomSymbolEqualityComparer : IEqualityComparer<ISymbol?>
                && xNamed.Name == yNamed.Name 
                && xNamed.TypeArguments.Length == yNamed.TypeArguments.Length 
                && xNamed.TypeArguments.Zip(yNamed.TypeArguments, Equals).All(b => b)
-               && (!_considerNullability || xNamed.NullableAnnotation == yNamed.NullableAnnotation);
+               && (!_considerNullability 
+                   // either both annotated
+                   || xNamed.NullableAnnotation == NullableAnnotation.Annotated && yNamed.NullableAnnotation == NullableAnnotation.Annotated
+                   // or both not annotated
+                   || xNamed.NullableAnnotation != NullableAnnotation.Annotated && yNamed.NullableAnnotation != NullableAnnotation.Annotated);
     }
 
     public int GetHashCode(ISymbol? obj) => _originalSymbolEqualityComparer.GetHashCode(obj);
