@@ -2,9 +2,9 @@
 
 namespace MrMeeseeks.SourceGeneratorUtility.Extensions;
 
-internal static class INamedTypeSymbolExtensions
+public static class INamedTypeSymbolExtensions
 {
-    internal static IEnumerable<INamedTypeSymbol> AllBaseTypesAndSelf(this INamedTypeSymbol type)
+    public static IEnumerable<INamedTypeSymbol> AllBaseTypesAndSelf(this INamedTypeSymbol type)
     {
         if (type.TypeKind is not (TypeKind.Class or TypeKind.Struct)) 
             yield break;
@@ -16,7 +16,7 @@ internal static class INamedTypeSymbolExtensions
             temp = temp.BaseType;
         }
     }
-    internal static IEnumerable<INamedTypeSymbol> AllDerivedTypesAndSelf(this INamedTypeSymbol type)
+    public static IEnumerable<INamedTypeSymbol> AllDerivedTypesAndSelf(this INamedTypeSymbol type)
     {
         var baseTypesAndSelf = new List<INamedTypeSymbol>();
         if (type.TypeKind is TypeKind.Class or TypeKind.Struct)
@@ -35,7 +35,7 @@ internal static class INamedTypeSymbolExtensions
             .AllInterfaces
             .Concat(baseTypesAndSelf);
     }
-    internal static IEnumerable<INamedTypeSymbol> AllNestedTypesAndSelf(this INamedTypeSymbol type)
+    public static IEnumerable<INamedTypeSymbol> AllNestedTypesAndSelf(this INamedTypeSymbol type)
     {
         yield return type;
         foreach (var typeMember in type.GetTypeMembers())
@@ -47,12 +47,12 @@ internal static class INamedTypeSymbolExtensions
         }
     }
     
-    internal static INamedTypeSymbol UnboundIfGeneric(this INamedTypeSymbol type) =>
+    public static INamedTypeSymbol UnboundIfGeneric(this INamedTypeSymbol type) =>
         type is { IsGenericType: true, IsUnboundGenericType: false }
             ? type.ConstructUnboundGenericType()
             : type;
     
-    internal static INamedTypeSymbol OriginalDefinitionIfUnbound(this INamedTypeSymbol type) =>
+    public static INamedTypeSymbol OriginalDefinitionIfUnbound(this INamedTypeSymbol type) =>
         type.IsUnboundGenericType
             ? type.OriginalDefinition
             : type;
