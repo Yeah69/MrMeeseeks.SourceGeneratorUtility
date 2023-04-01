@@ -13,7 +13,7 @@ public class CheckInternalsVisible : ICheckInternalsVisible
     private readonly Compilation _compilation;
     private readonly INamedTypeSymbol? _internalsVisibleToAttribute;
 
-    internal CheckInternalsVisible(
+    public CheckInternalsVisible(
         GeneratorExecutionContext generatorExecutionContext)
     {
         _compilation = generatorExecutionContext.Compilation;

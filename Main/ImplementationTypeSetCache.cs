@@ -18,7 +18,7 @@ public class ImplementationTypeSetCache : IImplementationTypeSetCache
     private IImmutableDictionary<IAssemblySymbol, IImmutableSet<INamedTypeSymbol>> _assemblyCache =
         ImmutableDictionary<IAssemblySymbol, IImmutableSet<INamedTypeSymbol>>.Empty;
 
-    internal ImplementationTypeSetCache(
+    public ImplementationTypeSetCache(
         GeneratorExecutionContext context,
         ICheckInternalsVisible checkInternalsVisible)
     {
