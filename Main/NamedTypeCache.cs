@@ -4,21 +4,21 @@ using MrMeeseeks.SourceGeneratorUtility.Extensions;
 
 namespace MrMeeseeks.SourceGeneratorUtility;
 
-public interface IImplementationTypeSetCache
+public interface INamedTypeCache
 {
     IImmutableSet<INamedTypeSymbol> All { get; }
 
     IImmutableSet<INamedTypeSymbol> ForAssembly(IAssemblySymbol assembly);
 }
 
-public class ImplementationTypeSetCache : IImplementationTypeSetCache
+public class NamedTypeCache : INamedTypeCache
 {
     private readonly ICheckInternalsVisible _checkInternalsVisible;
     private readonly Lazy<IImmutableSet<INamedTypeSymbol>> _all;
     private IImmutableDictionary<IAssemblySymbol, IImmutableSet<INamedTypeSymbol>> _assemblyCache =
         ImmutableDictionary<IAssemblySymbol, IImmutableSet<INamedTypeSymbol>>.Empty;
 
-    public ImplementationTypeSetCache(
+    public NamedTypeCache(
         GeneratorExecutionContext context,
         ICheckInternalsVisible checkInternalsVisible)
     {
@@ -50,17 +50,7 @@ public class ImplementationTypeSetCache : IImplementationTypeSetCache
         return GetAllNamespaces(assemblySymbol.GlobalNamespace)
             .SelectMany(ns => ns.GetTypeMembers())
             .SelectMany(t => t.AllNestedTypesAndSelf())
-            .Where(nts => nts is
-            {
-                IsAbstract: false,
-                IsStatic: false,
-                IsImplicitClass: false,
-                IsScriptClass: false,
-                TypeKind: TypeKind.Class or TypeKind.Struct or TypeKind.Structure,
-                DeclaredAccessibility: Accessibility.Public or Accessibility.Internal or Accessibility.ProtectedOrInternal
-            })
-            .Where(nts => nts.IsAccessiblePublicly() 
-                    || internalsAreVisible && nts.IsAccessibleInternally())
+            .Where(nts => nts.IsAccessiblePublicly() || internalsAreVisible && nts.IsAccessibleInternally())
             .ToImmutableHashSet<INamedTypeSymbol>(CustomSymbolEqualityComparer.Default);
     }
 
