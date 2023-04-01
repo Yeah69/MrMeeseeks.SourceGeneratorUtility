@@ -8,8 +8,17 @@ public static class INamedTypeSymbolExtensions
     {
         if (type.TypeKind is not (TypeKind.Class or TypeKind.Struct)) 
             yield break;
+
+        yield return type;
+        foreach (var baseType in type.AllBaseTypes())
+            yield return baseType;
+    }
+    public static IEnumerable<INamedTypeSymbol> AllBaseTypes(this INamedTypeSymbol type)
+    {
+        if (type.TypeKind is not (TypeKind.Class or TypeKind.Struct)) 
+            yield break;
         
-        var temp = type;
+        var temp = type.BaseType;
         while (temp is {})
         {
             yield return temp;
@@ -18,26 +27,36 @@ public static class INamedTypeSymbolExtensions
     }
     public static IEnumerable<INamedTypeSymbol> AllDerivedTypesAndSelf(this INamedTypeSymbol type)
     {
-        var baseTypesAndSelf = new List<INamedTypeSymbol>();
+        yield return type;
+        
+        foreach (var derivedType in type.AllDerivedTypes())
+            yield return derivedType;
+    }
+    public static IEnumerable<INamedTypeSymbol> AllDerivedTypes(this INamedTypeSymbol type)
+    {
+        foreach (var interfaceType in type
+                     .AllInterfaces)
+            yield return interfaceType;
         if (type.TypeKind is TypeKind.Class or TypeKind.Struct)
         {
-            var temp = type;
+            var temp = type.BaseType;
             while (temp is {})
             {
-                baseTypesAndSelf.Add(temp);
+                yield return temp;
                 temp = temp.BaseType;
             }
         }
-        else if (type.TypeKind is TypeKind.Interface)
-            baseTypesAndSelf.Add(type);
-        
-        return type
-            .AllInterfaces
-            .Concat(baseTypesAndSelf);
     }
     public static IEnumerable<INamedTypeSymbol> AllNestedTypesAndSelf(this INamedTypeSymbol type)
     {
         yield return type;
+        foreach (var nestedType in type.AllNestedTypes())
+        {
+            yield return nestedType;
+        }
+    }
+    public static IEnumerable<INamedTypeSymbol> AllNestedTypes(this INamedTypeSymbol type)
+    {
         foreach (var typeMember in type.GetTypeMembers())
         {
             foreach (var nestedType in typeMember.AllNestedTypesAndSelf())
