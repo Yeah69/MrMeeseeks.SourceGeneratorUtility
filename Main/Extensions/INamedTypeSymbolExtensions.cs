@@ -1,4 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace MrMeeseeks.SourceGeneratorUtility.Extensions;
 
@@ -75,4 +77,13 @@ public static class INamedTypeSymbolExtensions
         type.IsUnboundGenericType
             ? type.OriginalDefinition
             : type;
+    
+    public static IEnumerable<TypeDeclarationSyntax> GetTypeDeclarationSyntax(this INamedTypeSymbol type) =>
+        type.DeclaringSyntaxReferences
+            .Select(declaringSyntaxReference => declaringSyntaxReference.GetSyntax())
+            .OfType<TypeDeclarationSyntax>();
+    
+    public static bool IsPartial(this INamedTypeSymbol type) =>
+        type.GetTypeDeclarationSyntax()
+            .All(typeDeclarationSyntax => typeDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword));
 }
