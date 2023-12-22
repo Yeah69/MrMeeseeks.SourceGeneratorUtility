@@ -53,6 +53,11 @@ public static class ITypeSymbolExtensions
             _ => false,
         };
     }
+    
+    public static ITypeSymbol OriginalDefinitionIfUnbound(this ITypeSymbol type) =>
+        type is INamedTypeSymbol namedTypeSymbol
+            ? namedTypeSymbol.OriginalDefinitionIfUnbound()
+            : type;
 
     // Picked from https://github.com/YairHalberstadt/stronginject Thank you!
     public static string FullName(
