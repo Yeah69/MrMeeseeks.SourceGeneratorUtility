@@ -27,7 +27,7 @@ public sealed class CustomSymbolEqualityComparer : IEqualityComparer<ISymbol?>
             _ => _originalSymbolEqualityComparer.Equals(x, y)
         };
 
-        bool InnerEqualsNamed(INamedTypeSymbol xNamed, INamedTypeSymbol yNamed)
+        bool InnerEqualsNamed(INamedTypeSymbol xNamed, INamedTypeSymbol yNamed, bool considerTypeArguments = true)
         {
             if (xNamed is IErrorTypeSymbol || yNamed is IErrorTypeSymbol) 
                 return _originalSymbolEqualityComparer.Equals(x, y);
@@ -35,7 +35,7 @@ public sealed class CustomSymbolEqualityComparer : IEqualityComparer<ISymbol?>
             return _originalSymbolEqualityComparer.Equals(xNamed.ContainingNamespace, yNamed.ContainingNamespace) 
                    && xNamed.Name == yNamed.Name 
                    && xNamed.TypeArguments.Length == yNamed.TypeArguments.Length 
-                   && xNamed.TypeArguments.Zip(yNamed.TypeArguments, Equals).All(b => b)
+                   && (!considerTypeArguments || xNamed.TypeArguments.Zip(yNamed.TypeArguments, Equals).All(b => b))
                    && (!_considerNullability 
                        // either both annotated
                        || xNamed.NullableAnnotation == NullableAnnotation.Annotated && yNamed.NullableAnnotation == NullableAnnotation.Annotated
@@ -51,7 +51,7 @@ public sealed class CustomSymbolEqualityComparer : IEqualityComparer<ISymbol?>
                 // or both not annotated
                 || xTypeParameter.NullableAnnotation != NullableAnnotation.Annotated && yTypeParameter.NullableAnnotation != NullableAnnotation.Annotated)
             && (xTypeParameter.DeclaringMethod is {} xDeclaringMethod && yTypeParameter.DeclaringMethod is {} yDeclaringMethod && Equals(xDeclaringMethod, yDeclaringMethod) 
-                || xTypeParameter.DeclaringType is {} xDeclaringType && yTypeParameter.DeclaringType is {} yDeclaringType && Equals(xDeclaringType, yDeclaringType) 
+                || xTypeParameter.DeclaringType is {} xDeclaringType && yTypeParameter.DeclaringType is {} yDeclaringType && InnerEqualsNamed(xDeclaringType, yDeclaringType, considerTypeArguments: false) 
                 || xTypeParameter is { DeclaringType: null, DeclaringMethod: null } && yTypeParameter is { DeclaringType: null, DeclaringMethod: null });
     }
 
