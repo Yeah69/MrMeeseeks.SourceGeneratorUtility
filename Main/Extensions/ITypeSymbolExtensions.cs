@@ -5,7 +5,9 @@ namespace MrMeeseeks.SourceGeneratorUtility.Extensions;
 // ReSharper disable once InconsistentNaming
 public static class ITypeSymbolExtensions
 {
-    // Picked from https://github.com/YairHalberstadt/stronginject Thank you!
+    /// <summary>
+    /// Picked from https://github.com/YairHalberstadt/stronginject Thank you!
+    /// </summary>
     public static bool IsOrReferencesErrorType(this ITypeSymbol type)
     {
         if (!type.ContainingType?.IsOrReferencesErrorType() ?? false)
@@ -20,7 +22,9 @@ public static class ITypeSymbolExtensions
         };
     }
 
-    // Picked from https://github.com/YairHalberstadt/stronginject Thank you!
+    /// <summary>
+    /// Picked from https://github.com/YairHalberstadt/stronginject Thank you!
+    /// </summary>
     public static bool IsAccessibleInternally(this ITypeSymbol type)
     {
         if (type is ITypeParameterSymbol)
@@ -37,7 +41,9 @@ public static class ITypeSymbolExtensions
         };
     }
 
-    // Picked from https://github.com/YairHalberstadt/stronginject Thank you!
+    /// <summary>
+    /// Picked from https://github.com/YairHalberstadt/stronginject Thank you!
+    /// </summary>
     public static bool IsAccessiblePublicly(this ITypeSymbol type)
     {
         if (type is ITypeParameterSymbol)
@@ -58,8 +64,15 @@ public static class ITypeSymbolExtensions
         type is INamedTypeSymbol namedTypeSymbol
             ? namedTypeSymbol.OriginalDefinitionIfUnbound()
             : type;
-
-    // Picked from https://github.com/YairHalberstadt/stronginject Thank you!
+    
+    public static ITypeSymbol UnboundIfGeneric(this ITypeSymbol type) =>
+        type is INamedTypeSymbol namedTypeSymbol
+            ? namedTypeSymbol.UnboundIfGeneric()
+            : type;
+    
+    /// <summary>
+    /// Picked from https://github.com/YairHalberstadt/stronginject Thank you!
+    /// </summary>
     public static string FullName(
         this ITypeSymbol type,
         SymbolDisplayMiscellaneousOptions miscellaneousOptions = SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier) =>
