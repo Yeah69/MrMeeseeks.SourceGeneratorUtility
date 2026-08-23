@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using MrMeeseeks.SourceGeneratorUtility.Extensions;
 
 namespace MrMeeseeks.SourceGeneratorUtility;
 
@@ -31,6 +32,13 @@ public sealed class CustomSymbolEqualityComparer : IEqualityComparer<ISymbol?>
         {
             if (xNamed is IErrorTypeSymbol || yNamed is IErrorTypeSymbol) 
                 return _originalSymbolEqualityComparer.Equals(x, y);
+
+            var maybeXContaining = xNamed.ContainingType;
+            var maybeYContaining = yNamed.ContainingType;
+            if (maybeXContaining is not null && maybeYContaining is null
+                || maybeXContaining is null && maybeYContaining is not null
+                || maybeXContaining is not null && maybeYContaining is not null && !Equals(maybeXContaining, maybeYContaining))
+                return false;
             
             return _originalSymbolEqualityComparer.Equals(xNamed.ContainingNamespace, yNamed.ContainingNamespace) 
                    && xNamed.Name == yNamed.Name 
